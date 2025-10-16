@@ -4,8 +4,8 @@ import type { Gif } from "../interfaces/gif.interface";
 
 //const gifsCache: Record<string, Gif[]> = {};
 
-export const useGifs = (mockGifs: Gif[]) => {
-    const [gifList, setGifList] = useState<Gif[]>(mockGifs);
+export const useGifs = () => {
+    const [gifList, setGifList] = useState<Gif[]>([]);
     const [previousTerms, setPreviousTerms] = useState<string[]>([]);
 
 const gifsCache = useRef<Record<string, Gif[]>> ({});
@@ -15,9 +15,9 @@ const gifsCache = useRef<Record<string, Gif[]>> ({});
             setGifList(gifsCache.current[term]);
             return;
         };
-        /* const gifs = await getGifsByQuery(term);
-        setGifList(gifs); */
-
+        const gifs = await getGifsByQuery(term);
+        setGifList(gifs);
+        gifsCache.current[term]=gifs;
     };
     const handleSearch = async (query: string) => {
         query = query.trim().toLocaleLowerCase();
@@ -31,9 +31,10 @@ const gifsCache = useRef<Record<string, Gif[]>> ({});
     return {
         //Propierties
         gifList,
+        previousTerms, 
+        
         //Methods
         handleSearch, 
         handleTermCliked, 
-        previousTerms, 
     }
 }
